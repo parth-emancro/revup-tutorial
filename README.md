@@ -24,10 +24,10 @@ upload_pr_body = false
 ```
 
 4. To practice revup features, fork this repo to your local, and create a branch based off of the main branch named `<your-git-username>/dev`, and `git push -u origin <your-git-username>/dev`.
-   This is a placeholder branch that you should rebase on main (e.g. with `git rebase origin main && git rebase main`) as needed since this will act as the base/main branch for revup development.
-   If this method is not used, it's harder to work on different machines using a revup workflow since the local version of `main` can go out of sync across machines.
+   This is a branch that you should rebase on main using `git checkout main`, `git pull --rebase`, `git checkout <username>/dev`, `git rebase main`) as needed.
+   If this method is not used, it's harder to work on different machines using a revup workflow since there wouldn't be a remote version of your working commits.
 
-4.B. **IMPORTANT**: With `revup` usage, please ONLY `git push -u origin <your-git-username>/dev` after doing `git rebase origin main` , `git checkout <your-git-username>/dev`, and `git rebase main`. We don't want to push revup commits upstream since they represent PR's.
+   How revup functions is that you keep adding new _commits_ on top of the commits in `main`, and each commit has a related PR that is created/updated using `revup upload` and to make changes, `revup amend <HEAD~nth-commit>` is used to amend the PR with staged changes.
 
 5. Now you can follow the `Tutorial` section of [Skydio/revup](https://github.com/Skydio/revup), however when doing `git commit`, format your commit body as
 
@@ -40,19 +40,21 @@ upload_pr_body = false
 - [try to follow these guidelines for wording good commits](https://www.freecodecamp.org/news/git-best-practices-commits-and-code-reviews/)
 
 Topic: change-foo
-Relative-branch: <your-git-username>/dev
+Relative-branch: <branch-name if you're basing your PR off of someone's feature branch or PR>
 ```
 
 Note that the last two lines of the commit are what tell `revup` how to structure our Pull Request.
-For a PR we want to target for merging into `main`, we need to use `Relative-branch`, however stacked PR's, which can be of the following form, will need to specify `Relative: <name-of-relative-topic>`.
+For a PR we want to target for merging into `main`, our revup config already specifies that, however stacked PR's, which can be of the following form, will need to specify `Relative: <name-of-relative-topic>`.
+
+To have your PR be based on someone else's PR branch, you can specify `Relative-branch: <specific-branch>` which is basically a more specific way to say what PR we want ours to be relative to.
 
 ```
 main <------ change-foo <------- change-bar
+
+     <------ <other-users-PR-branch> <-------- change-abc(Relative-branch: <other-users-PR-branch>
 ```
 
-The advantage of this kind of setup is that you can easily use `revup amend` and `revup restack` to painlessly rebase all your PR's according to an updated `main` or relative topic branch.
-
-To have your PR be based on someone else's PR branch, you can specify `Relative-branch: <specific-branch>` which is basically a more specific way to say what PR we want ours to be relative to.
+The advantage of this kind of setup is that you are only rebasing **ONE branch**, which is your WIP branch, and when you do `revup upload`, all PR's represented by commits in that branch are updated.
 
 6. BEFORE you merge a branch in, make sure you change the PR to reflect that you want to merge it into `main` and **NOT** into `<your-git-username>/dev. And prior to doing that, please follow the instructions given in the **IMPORTANT** disclaimer at step **4.B**.
 
