@@ -15,7 +15,7 @@ This repo is meant to serve as a tutorial for common usage of https://github.com
 ```
 [revup]
 github_oauth = <your-personal-access-token>
-main_branch = <your-git-username>/dev
+main_branch = main
 
 [upload]
 rebase = true
