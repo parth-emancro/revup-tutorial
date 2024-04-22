@@ -1,0 +1,68 @@
+default_language_version:
+  python: python3.10
+  node: 18.16.0
+
+default_stages: [commit]
+
+exclude: '.*\.patch|Pipfile\.lock'
+
+repos:
+  - repo: https://github.com/keith/pre-commit-buildifier
+    rev: 6.4.0
+    hooks:
+      - id: buildifier
+        args:
+          - &buildifier_args "--warnings=native-cc,native-py,out-of-order-load"
+      - id: buildifier
+        name: "buildifier (external build files)"
+        files: &buildifier_external_files ^(.*/)?\w+\.BUILD.bazel$
+        args: &buildifier_external_args
+          - *buildifier_args
+          - --type=build
+      - id: buildifier-lint
+        args:
+          - *buildifier_args
+      - id: buildifier-lint
+        name: "buildifier-lint (external build files)"
+        files: *buildifier_external_files
+        args: *buildifier_external_args
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: debug-statements
+      - id: double-quote-string-fixer
+        types: [python]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/google/yapf
+    rev: v0.40.2
+    hooks:
+      - id: yapf
+        args: [-i, --style, .style.yapf]
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.12.0
+    hooks:
+      - id: reorder-python-imports
+        args: [--py37-plus]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.7
+    hooks:
+      - id: ruff
+        args: [--fix, --show-fixes, --exit-non-zero-on-fix]
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.3
+    hooks:
+      - id: clang-format
+  - repo: https://github.com/cpplint/cpplint
+    rev: 1.6.1
+    hooks:
+      - id: cpplint
+        args: ["--filter=-build/c++11,-build/c++14"]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
